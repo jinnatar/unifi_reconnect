@@ -1,18 +1,13 @@
-FROM python:3.11-buster AS poetry_builder
-ENV POETRY_HOME="/opt/poetry"
-ENV PATH="$POETRY_HOME/bin:$PATH"
-RUN curl -sSL https://install.python-poetry.org | python -
-
-FROM poetry_builder as builder
+FROM ghcr.io/astral-sh/uv:0.6.2-python3.13-alpine AS builder
 RUN mkdir /build
 WORKDIR /build
-COPY unifi_reconnect ./unifi_reconnect
-COPY poetry.lock pyproject.toml ./
-RUN poetry build -f wheel
 
-FROM python:3.11-slim-buster
+COPY pyproject.toml uv.lock README.md ./
+COPY src ./src
+RUN uv build
+
+FROM python:3.13-alpine
 WORKDIR /srv
-COPY --from=builder /build/dist/*.whl ./
-RUN pip install *.whl
+RUN --mount=type=bind,from=builder,source=/build,target=/build pip install /build/dist/*.whl
 
-ENTRYPOINT ["unifi_reconnect"]
+ENTRYPOINT [ "unifi_reconnect" ]
