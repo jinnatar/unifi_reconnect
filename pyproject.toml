@@ -1,22 +1,28 @@
-[tool.poetry]
+[tool.pdm.build]
+includes = []
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+authors = [
+    {name = "Jinnatar", email = "jinnak@nocturnal.fi"},
+]
+license = {text = "MIT"}
+requires-python = "<4.0,>=3.8"
+dependencies = [
+    "absl-py<2.0.0,>=1.0.0",
+    "unifi-api<2.0.0,>=1.0.3",
+    "jwt<2.0.0,>=1.3.1",
+]
 name = "unifi_reconnect"
 version = "0.1.0"
 description = "Reconnect a client device on a UniFi network"
-authors = ["Artanicus <artanicus@nocturnal.fi>"]
-license = "MIT"
 
-[tool.poetry.dependencies]
-python = "^3.8"
-absl-py = "^1.0.0"
-unifi-api = "^1.0.3"
-jwt = "^1.3.1"
+[project.scripts]
+unifi_reconnect = "unifi_reconnect:run"
 
-[tool.poetry.dev-dependencies]
-bumpversion = "^0.6.0"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-unifi_reconnect = 'unifi_reconnect:run'
+[dependency-groups]
+dev = [
+    "bumpversion<1.0.0,>=0.6.0",
+]
